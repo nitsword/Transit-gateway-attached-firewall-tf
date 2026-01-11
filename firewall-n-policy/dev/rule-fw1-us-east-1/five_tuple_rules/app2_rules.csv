@@ -1,0 +1,2 @@
+action,protocol,source,source_port,destination,destination_port,msg,sid
+pass,tcp,any,any,any,443,"Allow HTTP",1000003

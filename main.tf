@@ -15,44 +15,97 @@ provider "aws" {
 }
 
 locals {
-  domain_list_data = csvdecode(file(var.rules_csv_path))
-  allowed_domains = [
-    for d in local.domain_list_data : trimspace(d.domain)
-    if lookup(d, "action", "") != "" && upper(trimspace(d.action)) == "ALLOW"
-  ]
+  # Dynamic Path Construction
+  rules_base_path = "firewall-n-policy/${var.env}/${var.rule_set_name}"
 
-  five_tuple_rules_data = csvdecode(file(var.five_tuple_rules_csv_path))
+  # ---------------------------------------------------------------------------
+  # DOMAIN LIST RULES: Merging multiple CSVs
+  # ---------------------------------------------------------------------------
+  domain_files = fileset(path.module, "${local.rules_base_path}/domain_list_rules/*.csv")
+
+  # Decode all files and flatten into a single list of maps
+  all_domain_data = flatten([
+    for f in local.domain_files : csvdecode(file("${path.module}/${f}"))
+  ])
+
+  allowed_domains = distinct([
+    for d in local.all_domain_data : trimspace(d.domain)
+    if lookup(d, "action", "") != "" && upper(trimspace(d.action)) == "ALLOW"
+  ])
+
+  # ---------------------------------------------------------------------------
+  # 5-TUPLE RULES: Merging multiple CSVs
+  # ---------------------------------------------------------------------------
+  tuple_files = fileset(path.module, "${local.rules_base_path}/five_tuple_rules/*.csv")
+
+  all_tuple_data = flatten([
+    for f in local.tuple_files : csvdecode(file("${path.module}/${f}"))
+  ])
 
   five_tuple_rules = [
-    for i, r in local.five_tuple_rules_data : {
+    for i, r in local.all_tuple_data : {
       action           = upper(lookup(r, "action", "PASS"))
       protocol         = upper(lookup(r, "protocol", "TCP"))
-      source           = upper(lookup(r, "source", "ANY"))
-      source_port      = upper(lookup(r, "source_port", "ANY"))
-      destination      = upper(lookup(r, "destination", "ANY"))
-      destination_port = upper(lookup(r, "destination_port", "ANY"))
+      source           = lookup(r, "source", "ANY") == "" ? "ANY" : upper(r.source)
+      source_port      = lookup(r, "source_port", "ANY") == "" ? "ANY" : upper(r.source_port)
+      destination      = lookup(r, "destination", "ANY") == "" ? "ANY" : upper(r.destination)
+      destination_port = lookup(r, "destination_port", "ANY") == "" ? "ANY" : upper(r.destination_port)
       direction        = "FORWARD"
-      sid              = tostring(lookup(r, "sid", 1000001 + i))
+      # Generates unique SIDs starting from 1000001 based on index in merged list
+      sid = tostring(lookup(r, "sid", 1000001 + i))
     }
   ]
 }
 
 
+# Module for Domain List Rules
+module "domain_rules" {
+  source                    = "./modules/domain_list_rules"
+  environment               = var.environment
+  application               = var.application
+  region                    = var.region
+  env                       = var.env
+  base_tags                 = var.base_tags
+  firewall_policy_name      = var.firewall_policy_name
+  domain_list               = local.allowed_domains
+  enable_domain_allowlist   = var.enable_domain_allowlist
+  domain_rg_capacity        = var.domain_rg_capacity
+  stateful_rule_order       = var.stateful_rule_order
+  rule_set_name             = var.rule_set_name
+  priority_domain_allowlist = var.priority_domain_allowlist
+}
+
+# Module for 5-Tuple Rules
+module "five_tuple_rules" {
+  source                 = "./modules/five_tuple_rules"
+  environment            = var.environment
+  application            = var.application
+  region                 = var.region
+  env                    = var.env
+  base_tags              = var.base_tags
+  firewall_policy_name   = var.firewall_policy_name
+  five_tuple_rules       = local.five_tuple_rules
+  five_tuple_rg_capacity = var.five_tuple_rg_capacity
+  stateful_rule_order    = var.stateful_rule_order
+  priority_five_tuple    = var.priority_five_tuple
+
+}
+
+# Firewall Policy Module
 module "firewall_policy_conf" {
-  source                      = "./modules/firewall_policy_conf"
-  environment                 = var.environment
-  application                 = var.application
-  region                      = var.region
-  env                         = var.env
-  base_tags                   = var.base_tags
-  firewall_policy_name        = var.firewall_policy_name
-  five_tuple_rg_capacity      = var.five_tuple_rg_capacity
-  five_tuple_rules            = local.five_tuple_rules
-  domain_list                 = local.allowed_domains
-  enable_domain_allowlist     = var.enable_domain_allowlist
-  domain_rg_capacity          = var.domain_rg_capacity
+  source               = "./modules/firewall_policy_conf"
+  environment          = var.environment
+  application          = var.application
+  region               = var.region
+  env                  = var.env
+  base_tags            = var.base_tags
+  firewall_policy_name = var.firewall_policy_name
+  stateful_rule_order  = var.stateful_rule_order
+
+  domain_group_arn     = try(module.domain_rules.rule_group_arn, null)
+  five_tuple_group_arn = module.five_tuple_rules.rule_group_arn
+
   stateful_rule_group_arns    = var.stateful_rule_group_arns
-  stateful_rule_order         = var.stateful_rule_order
   stateful_rule_group_objects = var.stateful_rule_group_objects
   priority_domain_allowlist   = var.priority_domain_allowlist
   priority_five_tuple         = var.priority_five_tuple

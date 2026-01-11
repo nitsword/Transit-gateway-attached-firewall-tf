@@ -1,0 +1,2 @@
+domain,action,description
+.hashicorp.io,ALLOW,Hashicorp registry and subdomains

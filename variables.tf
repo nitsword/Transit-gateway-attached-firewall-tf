@@ -65,20 +65,6 @@ variable "enable_domain_allowlist" {
   default = false
 }
 
-variable "rules_csv_path" {
-  description = "Relative path to the environment-specific rule CSV file."
-  type        = string
-}
-
-variable "five_tuple_rules_csv_path" {
-  description = "Relative path to a CSV file containing structured 5-tuple rules"
-  type        = string
-  validation {
-    condition     = length(var.five_tuple_rules_csv_path) > 0
-    error_message = "five_tuple_rules_csv_path must be set and non-empty."
-  }
-}
-
 variable "tags" {
   type        = map(string)
   description = "Tags to apply to resources"
@@ -118,4 +104,10 @@ variable "transit_gateway_id" {
 variable "availability_zone_ids" {
   type        = list(string)
   description = "List of physical AZ IDs (e.g., use1-az1, use1-az2)"
+}
+
+variable "rule_set_name" {
+  description = "The specific firewall/region folder name"
+  type        = string
+  # Example: rules-fw1-us-east1
 }

@@ -7,23 +7,24 @@ env         = "dev"
 #rules_directory = "policy_config/dev/rules-fw1-us-east1"
 environment          = "Non-production::Dev"
 
+# --- Directory Targeting ---
+# This points to: fw-policy_config/dev/rules-fw1-us-east1/
+# locals use this to find the /domain_list_rules/ and /five_tuple_rules/ folders
+rule_set_name = "rule-fw1-us-east-1"
+
+# --- Firewall Policy Configuration ---
+firewall_name        = "inspection-firewall-dev"
 firewall_policy_name = "inspection-firewall-policy-dev"
-stateful_rule_order = "STRICT_ORDER"
- 
-priority_domain_allowlist = 10  # Second priority 
-priority_five_tuple       = 20  # Lowest priority
+stateful_rule_order  = "STRICT_ORDER"
+
+# --- Capacities & Priorities ---
+priority_domain_allowlist = 10 
+priority_five_tuple       = 20 
 
 enable_domain_allowlist = true
+domain_rg_capacity      = 100
+five_tuple_rg_capacity  = 100
 
-# --- 5-Tuple Rule Group Content ---
-
-five_tuple_rg_capacity    = 100
-five_tuple_rules_csv_path = "firewall-n-policy/dev/rule-fw1-us-east-1/five_tuple_rules.csv"
-
-rules_csv_path = "firewall-n-policy/dev/rule-fw1-us-east-1/dev_rules.csv"
-
-# --- Domain Rule Group (FQDN) Inputs ---
-
-domain_rg_capacity = 100
-
-stateful_rule_group_objects = [ ]
+# --- External Rule Groups ---
+stateful_rule_group_arns    = []
+stateful_rule_group_objects = []

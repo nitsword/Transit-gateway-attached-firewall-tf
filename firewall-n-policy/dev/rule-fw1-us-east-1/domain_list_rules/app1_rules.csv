@@ -1,0 +1,3 @@
+domain,action,description
+.amazon.com,ALLOW,AWS public services and subdomains
+.github.com,ALLOW,GitHub access and subdomains

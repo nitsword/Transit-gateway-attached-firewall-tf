@@ -3,6 +3,26 @@ variable "firewall_policy_name" {
   type        = string
 }
 
+variable "five_tuple_rg_capacity" {
+  description = "Capacity for the 5-tuple stateful rule group."
+  type        = number
+}
+
+variable "five_tuple_rules" {
+  description = "List of 5-tuple stateful rules as objects."
+  type = list(object({
+    action = string
+    protocol = string
+    source = string
+    source_port = string
+    destination = string
+    destination_port = string
+    direction = string
+    sid = string
+  }))
+}
+
+
 variable "stateful_rule_group_arns" {
   description = "List of additional stateful rule group ARNs to attach."
   type        = list(string)
@@ -21,11 +41,6 @@ variable "stateful_rule_group_objects" {
   default = []
 }
 
-variable "priority_domain_allowlist" {
-  description = "Priority for the internal Domain ALLOWLIST rule group (used in STRICT_ORDER)."
-  type        = number
-}
-
 variable "priority_five_tuple" {
   description = "Priority for the internal 5-Tuple rule group (used in STRICT_ORDER)."
   type        = number
@@ -35,29 +50,6 @@ variable "tags" {
   description = "Tags to apply to the VPC"
   type        = map(string)
   default     = {}
-}
-
-variable "domain_list" {
-  type        = list(string)
-  description = "List of domains to allow (e.g., ['.google.com'])"
-  default     = []
-}
-
-variable "enable_domain_allowlist" {
-  description = "Toggle to enable or disable the domain allowlist rule group"
-  type        = bool
-  default     = true
-}
-
-variable "domain_group_arn" {
-  type        = string
-  description = "The ARN of the domain list rule group"
-  default     = null
-}
-
-variable "five_tuple_group_arn" {
-  type        = string
-  description = "The ARN of the 5-tuple rule group"
 }
 
 variable "application" { type = string }

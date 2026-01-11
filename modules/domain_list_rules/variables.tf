@@ -3,6 +3,14 @@ variable "firewall_policy_name" {
   type        = string
 }
 
+# -------------------------------------------------------------------------
+# Domain Rule Groups (FQDN-based)
+# -------------------------------------------------------------------------
+variable "domain_rg_capacity" {
+  description = "Capacity for domain-based rule groups (allowlist/denylist)."
+  type        = number
+}
+
 variable "stateful_rule_group_arns" {
   description = "List of additional stateful rule group ARNs to attach."
   type        = list(string)
@@ -26,11 +34,6 @@ variable "priority_domain_allowlist" {
   type        = number
 }
 
-variable "priority_five_tuple" {
-  description = "Priority for the internal 5-Tuple rule group (used in STRICT_ORDER)."
-  type        = number
-}
-
 variable "tags" {
   description = "Tags to apply to the VPC"
   type        = map(string)
@@ -46,18 +49,7 @@ variable "domain_list" {
 variable "enable_domain_allowlist" {
   description = "Toggle to enable or disable the domain allowlist rule group"
   type        = bool
-  default     = true
-}
-
-variable "domain_group_arn" {
-  type        = string
-  description = "The ARN of the domain list rule group"
-  default     = null
-}
-
-variable "five_tuple_group_arn" {
-  type        = string
-  description = "The ARN of the 5-tuple rule group"
+  default     = false
 }
 
 variable "application" { type = string }
@@ -65,3 +57,4 @@ variable "environment" { type = string }
 variable "region" { type = string }
 variable "base_tags" { type = map(string) }
 variable "env" { type = string }
+variable "rule_set_name" { type = string }
