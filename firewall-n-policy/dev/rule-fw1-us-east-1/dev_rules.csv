@@ -1,0 +1,5 @@
+domain,action,description
+.amazon.com,ALLOW,AWS public services and subdomains
+.github.com,ALLOW,GitHub access and subdomains
+.terraform.io,ALLOW,Terraform registry and subdomains
+.redhat.io,ALLOW,Redhat registry and subdomains
