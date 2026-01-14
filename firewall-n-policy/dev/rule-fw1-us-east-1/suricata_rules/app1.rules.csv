@@ -1,0 +1,4 @@
+action,protocol,source_ip,source_port,direction,destination_ip,destination_port,csre_no,sid
+drop,http,HOME_NET,any,->,0.0.0.0/0,443,CHG00001,2026011401
+alert,tcp,HOME_NET,any,->,0.0.0.0/0,443,CHG00002,2026011402
+alert,tcp,HOME_NET,any,->,!HOME_NET,443,CHG00003,2026011403

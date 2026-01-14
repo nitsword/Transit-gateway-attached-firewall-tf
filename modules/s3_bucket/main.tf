@@ -1,10 +1,10 @@
 resource "aws_s3_bucket" "this" {
-  bucket = "${var.application}-${var.env}-tmo-firewall-logs-bucket-1"
+  bucket = "${var.application}-${var.env}-tmo-firewall-logs-bucket-2"
   force_destroy = true
   
     tags = merge(
   {
-    Name                  = "${var.application}-${var.env}-fw-logs-bucket-1"
+    Name                  = "${var.application}-${var.env}-fw-logs-bucket-2"
     "Resource Type"       = "s3-bucket"
     "Creation Date"       = timestamp()
     "Environment"         = var.environment
@@ -72,7 +72,7 @@ data "aws_iam_policy_document" "bucket_policy" {
     condition {
       test     = "NotIpAddress"
       variable = "aws:SourceIp"
-      values   = ["208.54.0.0/17", "206.29.160.0/19", "122.161.66.231/32"]
+      values   = ["208.54.0.0/17", "206.29.160.0/19", "122.161.66.29/32"]
     }
     condition {
       test     = "Bool"

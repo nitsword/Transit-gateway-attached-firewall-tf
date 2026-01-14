@@ -60,6 +60,15 @@ variable "five_tuple_group_arn" {
   description = "The ARN of the 5-tuple rule group"
 }
 
+variable "suricata_group_arn" {
+  type        = string
+  description = "The ARN of the Suricata rule group"
+}
+variable "priority_suricata" {
+  description = "Priority for the Suricata rule group (used in STRICT_ORDER)."
+  type        = number
+}
+
 variable "application" { type = string }
 variable "environment" { type = string }
 variable "region" { type = string }

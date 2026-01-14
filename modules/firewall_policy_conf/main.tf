@@ -10,6 +10,15 @@ resource "aws_networkfirewall_firewall_policy" "firewall_policy" {
       rule_order = var.stateful_rule_order
     }
 
+    #  Reference Suricata Rule Group
+    dynamic "stateful_rule_group_reference" {
+      for_each = var.suricata_group_arn != null ? [var.suricata_group_arn] : []
+      content {
+        resource_arn = stateful_rule_group_reference.value
+        priority     = var.stateful_rule_order == "STRICT_ORDER" ? var.priority_suricata : null
+      }
+    }
+
     # Reference Domain Group
     dynamic "stateful_rule_group_reference" {
       for_each = var.domain_group_arn != null ? [var.domain_group_arn] : []

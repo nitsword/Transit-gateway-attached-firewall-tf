@@ -31,7 +31,7 @@ resource "aws_networkfirewall_rule_group" "five_tuple_rule_group" {
   }
 
   tags = merge({
-    Name            = "${var.application}-${var.environment}-five-tuple-rg-${var.region}"
+    Name            = "${var.application}-${var.env}-five-tuple-rg-${var.region}"
     "Resource Type" = "five tuple rg"
     "Creation Date" = timestamp()
     "Environment"   = var.environment

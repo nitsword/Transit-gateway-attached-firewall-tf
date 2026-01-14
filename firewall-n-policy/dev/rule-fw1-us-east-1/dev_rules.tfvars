@@ -19,11 +19,13 @@ stateful_rule_order  = "STRICT_ORDER"
 
 # --- Capacities & Priorities ---
 priority_domain_allowlist = 10 
-priority_five_tuple       = 20 
+priority_five_tuple       = 20
+priority_suricata         = 30
 
 enable_domain_allowlist = true
 domain_rg_capacity      = 100
 five_tuple_rg_capacity  = 100
+suricata_rg_capacity   = 200
 
 # --- External Rule Groups ---
 stateful_rule_group_arns    = []

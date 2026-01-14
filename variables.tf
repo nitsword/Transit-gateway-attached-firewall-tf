@@ -111,3 +111,18 @@ variable "rule_set_name" {
   type        = string
   # Example: rules-fw1-us-east1
 }
+
+variable "suricata_rg_capacity" {
+  description = "Capacity for the suricata stateful rule group."
+  type        = number
+}
+
+variable "priority_suricata" {
+  type        = number
+  description = "The priority for the Suricata rule group (e.g., 10)"
+}
+
+variable "suricata_group_arn" {
+  type    = string
+  default = null
+}

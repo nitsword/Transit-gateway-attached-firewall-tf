@@ -21,7 +21,7 @@ resource "aws_networkfirewall_rule_group" "domain_allowlist" {
 
 
   tags = merge({
-    Name            = "${var.application}-${var.environment}-domain-allow-rg-${var.region}"
+    Name            = "${var.application}-${var.env}-domain-allow-rg-${var.region}"
     "Resource Type" = "domain-allow-rg"
     "Creation Date" = timestamp()
     "Environment"   = var.environment

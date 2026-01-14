@@ -3,9 +3,6 @@ variable "firewall_policy_name" {
   type        = string
 }
 
-# -------------------------------------------------------------------------
-# Domain Rule Groups (FQDN-based)
-# -------------------------------------------------------------------------
 variable "domain_rg_capacity" {
   description = "Capacity for domain-based rule groups (allowlist/denylist)."
   type        = number
